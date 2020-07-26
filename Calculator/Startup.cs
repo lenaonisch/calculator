@@ -1,3 +1,4 @@
+using Calculator.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace Calculator
                 op.UseSqlServer(Configuration.GetConnectionString("Database"))
             );
             services.AddScoped<SimpleCalculatorService>();
+            services.AddScoped<HistoryService>();
+
             services.AddControllers();
 
             services.AddOpenApiDocument(document =>

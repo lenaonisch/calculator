@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Calculator.Entities;
+using Calculator.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -13,11 +13,17 @@ namespace Calculator.Controllers
     {
         private readonly ILogger<CalculatorController> _logger;
         private readonly SimpleCalculatorService _calculator;
+        private readonly HistoryService _history;
 
-        public CalculatorController(ILogger<CalculatorController> logger, SimpleCalculatorService calculator)
+        public CalculatorController(
+            ILogger<CalculatorController> logger,
+            SimpleCalculatorService calculator,
+            HistoryService history
+        )
         {
             _logger = logger;
             _calculator = calculator;
+            _history = history;
         }
 
         [HttpGet]
@@ -52,6 +58,35 @@ namespace Calculator.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("/history/expression={expression}")]
+        public async Task<IEnumerable<HistoryItem>> History(string expression)
+        {
+            return await _history.SearchDatabaseByExpressionAsync(expression);
+        }
+
+        [HttpGet]
+        [Route("/history/operation={op}")]
+        public async Task<IEnumerable<HistoryItem>> HistoryByOperation(string op)
+        {
+            return await _history.SearchDatabaseByOperationAsync(op);
+        }
+
+        [HttpGet]
+        [Route("/history/result={result}")]
+        public async Task<IEnumerable<HistoryItem>> HistoryResult(string result)
+        {
+            float numResult;
+            if (float.TryParse(result, out numResult))
+            {
+                return await _history.SearchDatabaseAsync(numResult);
+            }
+            else
+            {
+                return await _history.SearchDatabaseAsync(result: null);
+            }
         }
     }
 }

@@ -7,11 +7,11 @@ namespace Calculator.Entities
 {
     public class HistoryItem
     {
-        public int Id { get; set; }
-        public char Operation { get; set; }
-        public float Argument1 { get; set; }
-        public float Argument2 { get; set; }
-        public float? Result { get; set; }
+        public long Id { get; set; }
+        public string Operation { get; set; }
+        public double Argument1 { get; set; }
+        public double? Argument2 { get; set; }
+        public double? Result { get; set; }
         public DateTime DateTime { get; set; }
         public string Expression { get; set; }
     }
