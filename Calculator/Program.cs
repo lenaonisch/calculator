@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.MSSqlServer.Sinks.MSSqlServer.Options;
 
 namespace Calculator
 {
@@ -28,15 +23,8 @@ namespace Calculator
                 .Configuration(Configuration)
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
                 .MinimumLevel.Override("System", LogEventLevel.Error)
-                .WriteTo.Console()
                 .CreateLogger();
-            //Log.Logger = new LoggerConfiguration()
-            //    .WriteTo
-            //    .MSSqlServer(
-            //        connectionString: "Server=(localdb)\\MSSQLLocalDB;Database=Calculator;Integrated Security=SSPI;",
-            //        sinkOptions: new SinkOptions { TableName = "Log" })
-            //    .WriteTo.Console()
-            //    .CreateLogger();
+
             try
             {
                 Log.Information("Getting the motors running...");
@@ -57,7 +45,9 @@ namespace Calculator
             WebHost.CreateDefaultBuilder(args)
                    .UseStartup<Startup>()
                    .UseConfiguration(Configuration)
-                   .UseSerilog().Build();
+                   .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom
+                   .Configuration(hostingContext.Configuration))
+                   .Build();
 
     }
 }
